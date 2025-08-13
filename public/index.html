@@ -23,9 +23,67 @@
   </head>
   <body>
     <div id="app">
+      <section class="new-plant-modal hidden">
+        <i id="close-modal-btn" class="ph-fill ph-x-square"></i>
+        <form action="" id="new-plant-form">
+          <h1 class="main-title">Nova Planta</h1>
+          <div class="input-wrapper">
+            <input
+              class="form-input"
+              type="text"
+              name="plant-name"
+              id="plant-name"
+              placeholder="Nome da planta"
+              required
+            />
+          </div>
+          <div class="input-wrapper">
+            <input
+              class="form-input"
+              type="number"
+              name="watering-frequency"
+              id="watering-frequency"
+              placeholder="Frequencia de rega (dias)"
+              required
+            />
+          </div>
+          <div class="input-wrapper">
+            <input
+              class="form-input date-input"
+              type="text"
+              name="last-watering-date"
+              id="last-watering-date"
+              placeholder="Última rega dd/mm/aaaa"
+              maxlength="10"
+              required
+            />
+          </div>
+          <div class="input-wrapper">
+            <input
+              class="form-input date-input"
+              type="text"
+              name="last-fertilization"
+              id="last-fertilization"
+              placeholder="Última adubagem dd/mm/aaaa"
+              required
+            />
+          </div>
+          <div class="input-wrapper">
+            <input
+              class="form-input"
+              type="number"
+              name="fertilization-frequency"
+              id="fertilization-frequency"
+              placeholder="Frequencia de adubagem (dias)"
+              required
+            />
+          </div>
+          <button type="submit" class="form-button">Salvar</button>
+        </form>
+      </section>
       <main>
         <h1 class="main-title">Minhas Plantas</h1>
-        <button class="primary-button">Adicionar Planta</button>
+        <button class="primary-button" id="open-add-new-plant-modal">Adicionar Planta</button>
 
         <section class="plant-cards-container">
           <div class="plant-card">

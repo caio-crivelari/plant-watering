@@ -34,10 +34,13 @@ h6 {
 }
 
 p,
-button {
+button,
+input {
   font-family: "Raleway", sans-serif;
   color: var(--primary-color);
 }
+
+/*ESTILIZAÇÃO GERAL*/
 
 #app {
   min-height: 100vh;
@@ -47,7 +50,72 @@ button {
   padding: 1rem;
 }
 
-main h1 {
+.new-plant-modal {
+  background: url("../assets/background-mobile.png") top center/cover no-repeat;
+  position: fixed;
+  min-height: 100vh;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: grid;
+  place-content: center;
+}
+
+#close-modal-btn {
+  font-size: 2rem;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+#close-modal-btn:hover {
+  color: var(--secondary-color);
+}
+
+#new-plant-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 32rem;
+  padding: 1rem;
+}
+
+.form-input {
+  padding: 1rem 0.8rem;
+  width: 100%;
+  border: 0.1rem solid var(--secondary-color);
+  border-radius: 1.2rem;
+  outline: 0.1rem solid transparent;
+}
+
+.form-input:focus {
+  outline: 0.1rem solid var(--primary-color);
+}
+
+.form-button {
+  background: url("../assets/wooden-background.jpg") top center/cover no-repeat;
+  border: none;
+  padding: 1rem 2rem;
+  width: 35%;
+  margin: auto;
+  border-radius: 0.4rem;
+  font-size: 2rem;
+  font-weight: bolder;
+  color: var(--primary-color);
+  font-family: "Lora", serif;
+  cursor: pointer;
+}
+
+.form-button:hover {
+  scale: 1.1;
+}
+
+.hidden {
+  display: none;
+}
+
+main h1,
+.new-plant-modal h1 {
   text-align: center;
   color: var(--soft-texture);
   margin-block: 1rem;
