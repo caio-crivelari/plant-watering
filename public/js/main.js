@@ -3,21 +3,24 @@ const openAddNewPlantModal = document.querySelector(
   "#open-add-new-plant-modal"
 );
 const closeModalBtn = document.querySelector("#close-modal-btn");
+const newPlantModal = document.querySelector(".new-plant-modal");
 
 openAddNewPlantModal.addEventListener("click", () => {
-  const newPlantModal = document.querySelector(".new-plant-modal");
-  const main = document.querySelector("main");
   newPlantModal.classList.remove("hidden");
-  main.classList.add("hidden");
+  setTimeout(() => newPlantModal.classList.add("show"), 10);
 });
 
 closeModalBtn.addEventListener("click", () => {
   const newPlantForm = document.querySelector("#new-plant-form");
-  const newPlantModal = document.querySelector(".new-plant-modal");
-  const main = document.querySelector("main");
+  newPlantModal.classList.remove("show");
   newPlantForm.reset();
-  newPlantModal.classList.add("hidden");
-  main.classList.remove("hidden");
+  newPlantModal.addEventListener(
+    "transitionend",
+    () => {
+      newPlantModal.classList.add("hidden"); // esconde de vez após animação
+    },
+    { once: true }
+  );
 });
 
 //aplicando máscara de data dd/mm/aaaa aos inputs necessários
