@@ -1,0 +1,95 @@
+@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  font-size: 62.5%;
+  --primary-color: #3d5a40;
+  --secondary-color: #7d9a6c;
+  --background-primary-color: #c7d796;
+  --background-secondary-color: #e7eccd;
+  --soft-texture: #bdae98;
+  --highlights: #c9d5b5;
+  --white: #fff;
+}
+
+body {
+  font-size: 1.6rem;
+}
+
+/*TIPOGRAFIAS*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Lora", serif;
+  color: var(--primary-color);
+}
+
+p,
+button {
+  font-family: "Raleway", sans-serif;
+  color: var(--primary-color);
+}
+
+#app {
+  min-height: 100vh;
+  background: url("../assets/background-mobile.png") top center/cover no-repeat;
+  display: grid;
+  place-content: center;
+  padding: 1rem;
+}
+
+main h1 {
+  text-align: center;
+  color: var(--soft-texture);
+  margin-block: 1rem;
+}
+
+.primary-button {
+  border: none;
+  background-color: var(--primary-color);
+  color: var(--white);
+  font-size: 1.6rem;
+  padding: 1.6rem 1.4rem;
+  border-radius: 1.5rem;
+  display: block;
+  margin-left: auto;
+  transition: 0.2s ease-in-out;
+}
+
+.primary-button:hover {
+  background-color: var(--secondary-color);
+  cursor: pointer;
+}
+
+.plant-cards-container {
+  margin-top: 5rem;
+  background-color: var(--background-primary-color);
+  padding: 2rem;
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.plant-card {
+  background-color: var(--background-secondary-color);
+  padding: 1.4rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  border-radius: 2rem;
+}
+
+.plant-card i {
+  font-size: 4rem;
+  color: #3bb1ff;
+}
