@@ -23,22 +23,41 @@ app.get("/test-db", async (req, res) => {
 });
 
 //POST
-
-/* app.post('/insertNewPlant', async (req, res) => {
-  const { 
+app.post("/insertNewPlant", async (req, res) => {
+  const {
     plantName,
-    wateringFrequency,
     lastWatering,
+    wateringFrequency,
+    nextWatering,
     lastFertilization,
-    fertilizationFrequency
-  } = req.body
+    fertilizationFrequency,
+    nextFertilization,
+  } = req.body;
 
   try {
-    const query = "INSERT INTO plant_schema.tbl_plants"
+    const query =
+      "INSERT INTO plant_schema.tbl_plants (plant_name, last_watering, watering_frequency, next_watering, last_fertilization, fertilization_frequency, next_fertilization) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;";
+
+    const values = [
+      plantName,
+      lastWatering,
+      wateringFrequency,
+      nextWatering,
+      lastFertilization,
+      fertilizationFrequency,
+      nextFertilization,
+    ];
+
+    const result = await pool.query(query, values);
+
+    res.status(201).json({ success: true, data: result.rows[0] });
   } catch (error) {
-    
+    console.error("Não foi possível cadastrar a planta");
+    res
+      .status(500)
+      .json({ success: false, message: "Erro ao cadastrar planta" });
   }
-}) */
+});
 
 //SE O SERVIDOR CONSEGUIR RODAR, APARECE NO CONSOLE A MENSAGEM ABAIXO
 app.listen(PORT, () => {

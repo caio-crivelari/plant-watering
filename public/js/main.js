@@ -55,25 +55,23 @@ async function insertNewPlant() {
   const fertilizationFrequency = document.querySelector(
     "#fertilization-frequency"
   ).value;
-  let nextWatering = nextDateCalculator(lastWatering, wateringFrequency);
-  let nextFertilization = nextDateCalculator(
+  const nextWatering = nextDateCalculator(lastWatering, wateringFrequency);
+  const nextFertilization = nextDateCalculator(
     lastFertilization,
     fertilizationFrequency
   );
 
-  alert(
-    `Planta a Ser cadastrada:\nNome: ${plantName}\nÚltima Rega:${lastWatering}\nFrequencia de Rega:${wateringFrequency} dias\núltima fertilização: ${lastFertilization}\nFrequencia de Fertilização:${fertilizationFrequency}\nPróxima rega: ${nextWatering}\nPróxima fertilização:${nextFertilization}`
-  );
-
-  /*   const response = await fetch("/insertNewPlant", {
+  const response = await fetch("/insertNewPlant", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       plantName,
-      wateringFrequency,
       lastWatering,
+      wateringFrequency,
+      nextWatering,
       lastFertilization,
       fertilizationFrequency,
+      nextFertilization,
     }),
   });
 
@@ -89,7 +87,7 @@ async function insertNewPlant() {
     return;
   } else {
     alert("Erro ao inserir nova planta!");
-  } */
+  }
 }
 
 function nextDateCalculator(lastDate, frequency) {
@@ -109,4 +107,3 @@ function nextDateCalculator(lastDate, frequency) {
 
   return formattedDate;
 }
-

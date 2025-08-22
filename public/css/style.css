@@ -44,10 +44,10 @@ input {
 
 .progress-bar {
   margin-block: 0.5rem;
-  color: #fff;
-  background-color: #00810d;
+  color: var(--soft-texture);
+  background-color: var(--primary-color);
   border: 0.1rem solid #3b3b3b;
-  border-radius: 0.3rem;
+  border-radius: 0.8rem;
   font-weight: bold;
   padding: 1.2rem;
   text-align: center;
@@ -60,10 +60,11 @@ input {
   z-index: 1001;
   transform: translateX(-50%);
   animation: enterFromTop 0.3s;
+  font-family: "Raleway", sans-serif;
 }
 
 .progress-background {
-  background-color: #fff;
+  background-color: var(--white);
   height: 0.3rem;
   width: 100%;
   animation: progress 3s;
