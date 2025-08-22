@@ -42,6 +42,34 @@ input {
 
 /*ESTILIZAÇÃO GERAL*/
 
+.progress-bar {
+  margin-block: 0.5rem;
+  color: #fff;
+  background-color: #00810d;
+  border: 0.1rem solid #3b3b3b;
+  border-radius: 0.3rem;
+  font-weight: bold;
+  padding: 1.2rem;
+  text-align: center;
+  font-weight: bold;
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 30rem;
+  z-index: 1001;
+  transform: translateX(-50%);
+  animation: enterFromTop 0.3s;
+}
+
+.progress-background {
+  background-color: #fff;
+  height: 0.3rem;
+  width: 100%;
+  animation: progress 3s;
+  margin-top: 0.5rem;
+}
+
 #app {
   min-height: 100vh;
   background: url("../assets/background-mobile.png") top center/cover no-repeat;
@@ -59,14 +87,14 @@ input {
   place-content: center;
   opacity: 0;
   transform: translateY(-50px);
-  pointer-events: none; 
+  pointer-events: none;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .new-plant-modal.show {
   opacity: 1;
   transform: translateY(0);
-  pointer-events: auto; 
+  pointer-events: auto;
 }
 
 #close-modal-btn {
@@ -111,6 +139,7 @@ input {
   color: var(--primary-color);
   font-family: "Lora", serif;
   cursor: pointer;
+  transition: 0.2s ease-in-out;
 }
 
 .form-button:hover {
@@ -167,4 +196,27 @@ main h1,
 .plant-card i {
   font-size: 4rem;
   color: #3bb1ff;
+}
+
+/*ANIMAÇÕES*/
+
+@keyframes progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0px;
+    padding-inline: 0;
+  }
+}
+
+@keyframes enterFromTop {
+  from {
+    top: -5rem;
+    opacity: 0;
+  }
+  to {
+    top: 0;
+    opacity: 1;
+  }
 }

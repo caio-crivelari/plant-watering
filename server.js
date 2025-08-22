@@ -22,6 +22,25 @@ app.get("/test-db", async (req, res) => {
   }
 });
 
+//POST
+
+/* app.post('/insertNewPlant', async (req, res) => {
+  const { 
+    plantName,
+    wateringFrequency,
+    lastWatering,
+    lastFertilization,
+    fertilizationFrequency
+  } = req.body
+
+  try {
+    const query = "INSERT INTO plant_schema.tbl_plants"
+  } catch (error) {
+    
+  }
+}) */
+
+//SE O SERVIDOR CONSEGUIR RODAR, APARECE NO CONSOLE A MENSAGEM ABAIXO
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });

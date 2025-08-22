@@ -40,3 +40,73 @@ dateTimeInputs.forEach((input) => {
     evt.target.value = value;
   });
 });
+
+const newPlantForm = document.querySelector("#new-plant-form");
+newPlantForm.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+  insertNewPlant();
+});
+
+async function insertNewPlant() {
+  const plantName = document.querySelector("#plant-name").value;
+  const wateringFrequency = document.querySelector("#watering-frequency").value;
+  const lastWatering = document.querySelector("#last-watering-date").value;
+  const lastFertilization = document.querySelector("#last-fertilization").value;
+  const fertilizationFrequency = document.querySelector(
+    "#fertilization-frequency"
+  ).value;
+  let nextWatering = nextDateCalculator(lastWatering, wateringFrequency);
+  let nextFertilization = nextDateCalculator(
+    lastFertilization,
+    fertilizationFrequency
+  );
+
+  alert(
+    `Planta a Ser cadastrada:\nNome: ${plantName}\nÚltima Rega:${lastWatering}\nFrequencia de Rega:${wateringFrequency} dias\núltima fertilização: ${lastFertilization}\nFrequencia de Fertilização:${fertilizationFrequency}\nPróxima rega: ${nextWatering}\nPróxima fertilização:${nextFertilization}`
+  );
+
+  /*   const response = await fetch("/insertNewPlant", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      plantName,
+      wateringFrequency,
+      lastWatering,
+      lastFertilization,
+      fertilizationFrequency,
+    }),
+  });
+
+  const result = await response.json();
+  if (result.success) {
+    const progressBar = document.querySelector(".progress-bar");
+    progressBar.style.display = "block";
+    progressBar.innerHTML = `Planta ${plantName} cadastrada com sucesso! <div class="progress-background"></div>`;
+    setTimeout(() => {
+      progressBar.style.display = "none";
+    }, 3000);
+    document.querySelector("#new-plant-form").reset();
+    return;
+  } else {
+    alert("Erro ao inserir nova planta!");
+  } */
+}
+
+function nextDateCalculator(lastDate, frequency) {
+  //pegando os dados separadamente pois a data vem como dd/mm/aaaa
+  const day = parseInt(lastDate.slice(0, 2));
+  const month = parseInt(lastDate.slice(3, 5));
+  const year = parseInt(lastDate.slice(6));
+
+  const convertedDate = new Date(year, month - 1, day);
+
+  convertedDate.setDate(convertedDate.getDate() + Number(frequency));
+  const newDay = String(convertedDate.getDate()).padStart(2, "0");
+  const newMonth = String(convertedDate.getMonth() + 1).padStart(2, "0");
+  const newYear = convertedDate.getFullYear();
+
+  const formattedDate = `${newDay}/${newMonth}/${newYear}`;
+
+  return formattedDate;
+}
+
