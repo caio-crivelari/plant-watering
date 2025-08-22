@@ -96,8 +96,10 @@ function nextDateCalculator(lastDate, frequency) {
   const month = parseInt(lastDate.slice(3, 5));
   const year = parseInt(lastDate.slice(6));
 
+  //juntando todos para poder usar o new Date e calcular
   const convertedDate = new Date(year, month - 1, day);
 
+  //adicionando os dias de frequencia a data e devolvendo a data formatada
   convertedDate.setDate(convertedDate.getDate() + Number(frequency));
   const newDay = String(convertedDate.getDate()).padStart(2, "0");
   const newMonth = String(convertedDate.getMonth() + 1).padStart(2, "0");
@@ -107,3 +109,34 @@ function nextDateCalculator(lastDate, frequency) {
 
   return formattedDate;
 }
+
+function renderPlants() {
+  const plantsContainer = document.querySelector(".plant-cards-container");
+
+  fetch("/getPlants")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        data.data.forEach((plant) => {
+          plantsContainer.innerHTML += `
+          <div class="plant-card">
+            <div class="plant-data">
+              <h3 class="main-title">${plant.plant_name}</h3>
+              <p>Regar a cada ${plant.watering_frequency} dias</p>
+              <p>Última rega: ${plant.last_watering}</p>
+              <p>Próxima rega: ${plant.next_watering}</p>
+              <p>Adubar a cada ${plant.fertilization_frequency} dias</p>
+              <p>Última Adubagem: ${plant.last_fertilization}</p>
+              <p>Próxima Adubagem: ${plant.next_fertilization}</p>
+            </div>
+            <div class="plant-actions">
+              <i class="ph-fill ph-drop"></i>
+            </div>
+          </div>
+          `;
+        });
+      }
+    });
+}
+
+renderPlants();

@@ -59,6 +59,22 @@ app.post("/insertNewPlant", async (req, res) => {
   }
 });
 
+//GET
+app.get("/getPlants", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, plant_name, last_watering, watering_frequency, next_watering, last_fertilization, fertilization_frequency, next_fertilization from plant_schema.tbl_plants"
+    );
+
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    console.error("Não foi possível listar as plantas");
+    res
+      .status(500)
+      .json({ success: false, message: "Erro ao listar as plantas" });
+  }
+});
+
 //SE O SERVIDOR CONSEGUIR RODAR, APARECE NO CONSOLE A MENSAGEM ABAIXO
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
