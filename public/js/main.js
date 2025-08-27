@@ -132,7 +132,7 @@ function renderPlants() {
               <p>Regar a cada <span id="plant-watering-frequency">${plant.watering_frequency}</span> dias</p>
               <p>Última rega: <span id="plant-last-watering">${plant.last_watering}</span></p>
               <p>Próxima rega: <span id="plant-next-watering">${plant.next_watering}</span></p>
-              <p>Adubar a cada <span id="plant-fertilization-frequency">${plant.fertilization_frequency}/<span> dias</p>
+              <p>Adubar a cada <span id="plant-fertilization-frequency">${plant.fertilization_frequency}</span> dias</p>
               <p>Última Adubagem: <span id="plant-last-fertilization">${plant.last_fertilization}</span></p>
               <p>Próxima Adubagem: <span id="plant-next-fertilization">${plant.next_fertilization}</span></p>
             </div>
