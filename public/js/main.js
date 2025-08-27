@@ -84,30 +84,36 @@ async function insertNewPlant() {
       progressBar.style.display = "none";
     }, 3000);
     document.querySelector("#new-plant-form").reset();
+    renderPlants();
     return;
   } else {
     alert("Erro ao inserir nova planta!");
   }
 }
 
+//função que calcula a proxima rega e adubagem, no momento da criação de uma nova planta
 function nextDateCalculator(lastDate, frequency) {
-  //pegando os dados separadamente pois a data vem como dd/mm/aaaa
-  const day = parseInt(lastDate.slice(0, 2));
-  const month = parseInt(lastDate.slice(3, 5));
-  const year = parseInt(lastDate.slice(6));
+  const convertedDate = unformatDate(lastDate);
 
-  //juntando todos para poder usar o new Date e calcular
-  const convertedDate = new Date(year, month - 1, day);
-
-  //adicionando os dias de frequencia a data e devolvendo a data formatada
+  //adicionando os dias de frequencia à data e devolvendo a data formatada
   convertedDate.setDate(convertedDate.getDate() + Number(frequency));
-  const newDay = String(convertedDate.getDate()).padStart(2, "0");
-  const newMonth = String(convertedDate.getMonth() + 1).padStart(2, "0");
-  const newYear = convertedDate.getFullYear();
+  return dateFormatter(convertedDate);
+}
 
-  const formattedDate = `${newDay}/${newMonth}/${newYear}`;
+function unformatDate(dateToFormat) {
+  const day = parseInt(dateToFormat.slice(0, 2));
+  const month = parseInt(dateToFormat.slice(3, 5));
+  const year = parseInt(dateToFormat.slice(6));
+  const convertedDate = new Date(year, month - 1, day);
+  return convertedDate;
+}
 
-  return formattedDate;
+function dateFormatter(dateToFormat) {
+  const formattedDay = String(dateToFormat.getDate()).padStart(2, "0");
+  const formattedMonth = String(dateToFormat.getMonth() + 1).padStart(2, "0");
+  const formattedYear = dateToFormat.getFullYear();
+
+  return `${formattedDay}/${formattedMonth}/${formattedYear}`;
 }
 
 function renderPlants() {
@@ -117,25 +123,51 @@ function renderPlants() {
     .then((res) => res.json())
     .then((data) => {
       if (data.success) {
+        plantsContainer.innerHTML = "";
         data.data.forEach((plant) => {
           plantsContainer.innerHTML += `
-          <div class="plant-card">
+          <div class="plant-card" id="plant-id-${plant.id}">
             <div class="plant-data">
               <h3 class="main-title">${plant.plant_name}</h3>
-              <p>Regar a cada ${plant.watering_frequency} dias</p>
-              <p>Última rega: ${plant.last_watering}</p>
-              <p>Próxima rega: ${plant.next_watering}</p>
-              <p>Adubar a cada ${plant.fertilization_frequency} dias</p>
-              <p>Última Adubagem: ${plant.last_fertilization}</p>
-              <p>Próxima Adubagem: ${plant.next_fertilization}</p>
+              <p>Regar a cada <span id="plant-watering-frequency">${plant.watering_frequency}</span> dias</p>
+              <p>Última rega: <span id="plant-last-watering">${plant.last_watering}</span></p>
+              <p>Próxima rega: <span id="plant-next-watering">${plant.next_watering}</span></p>
+              <p>Adubar a cada <span id="plant-fertilization-frequency">${plant.fertilization_frequency}/<span> dias</p>
+              <p>Última Adubagem: <span id="plant-last-fertilization">${plant.last_fertilization}</span></p>
+              <p>Próxima Adubagem: <span id="plant-next-fertilization">${plant.next_fertilization}</span></p>
             </div>
             <div class="plant-actions">
-              <i class="ph-fill ph-drop"></i>
+              <i id="${plant.id}" class="ph-fill ph-drop"></i>
             </div>
           </div>
           `;
         });
       }
+
+      const waterPlantButtons = document.querySelectorAll(".ph-drop");
+      waterPlantButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const plantId = button.getAttribute("id");
+          let plantLastWatering = document.querySelector(
+            `#plant-id-${plantId} #plant-last-watering`
+          ).textContent;
+          const plantWateringFrequency = document.querySelector(
+            `#plant-id-${plantId} #plant-watering-frequency`
+          ).textContent;
+          let plantNextWatering = document.querySelector(
+            `#plant-id-${plantId} #plant-next-watering`
+          ).textContent;
+
+          console.log(
+            `ANTES DA ATUALIZAÇÃO DAS DATAS:\nÚltima Rega: ${plantLastWatering}\nFrequencia de Rega: ${plantWateringFrequency}\nPróxima Rega: ${plantNextWatering}`
+          );
+
+          const today = new Date();
+
+          document.querySelector(`#plant-id-${plantId} #plant-last-watering`).textContent = dateFormatter(today)
+          document.querySelector(`#plant-id-${plantId} #plant-next-watering`).textContent = nextDateCalculator(dateFormatter(today), plantWateringFrequency)
+        });
+      });
     });
 }
 
