@@ -146,7 +146,7 @@ function renderPlants() {
 
       const waterPlantButtons = document.querySelectorAll(".ph-drop");
       waterPlantButtons.forEach((button) => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", async () => {
           const plantId = button.getAttribute("id");
           let plantLastWatering = document.querySelector(
             `#plant-id-${plantId} #plant-last-watering`
@@ -154,18 +154,41 @@ function renderPlants() {
           const plantWateringFrequency = document.querySelector(
             `#plant-id-${plantId} #plant-watering-frequency`
           ).textContent;
-          let plantNextWatering = document.querySelector(
-            `#plant-id-${plantId} #plant-next-watering`
-          ).textContent;
-
-          console.log(
-            `ANTES DA ATUALIZAÇÃO DAS DATAS:\nÚltima Rega: ${plantLastWatering}\nFrequencia de Rega: ${plantWateringFrequency}\nPróxima Rega: ${plantNextWatering}`
-          );
 
           const today = new Date();
+          const todayFormatted = dateFormatter(today);
 
-          document.querySelector(`#plant-id-${plantId} #plant-last-watering`).textContent = dateFormatter(today)
-          document.querySelector(`#plant-id-${plantId} #plant-next-watering`).textContent = nextDateCalculator(dateFormatter(today), plantWateringFrequency)
+          if (plantLastWatering == todayFormatted) {
+            alert("Planta já regada no dia de hoje!");
+            return;
+          } else {
+            const nextWateringUpdated = nextDateCalculator(
+              todayFormatted,
+              plantWateringFrequency
+            );
+
+            try {
+              const response = await fetch(`/plants/${plantId}/water`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  lastWatering: todayFormatted,
+                  nextWatering: nextWateringUpdated,
+                }),
+              });
+              if (!response.ok) throw new Error("Erro ao atualizar a rega");
+              const progressBar = document.querySelector(".progress-bar");
+              progressBar.style.display = "block";
+              progressBar.innerHTML = `Planta regada com sucesso! <div class="progress-background"></div>`;
+              setTimeout(() => {
+                progressBar.style.display = "none";
+              }, 3000);
+              renderPlants();
+            } catch (error) {
+              console.error(error);
+              alert("Erro ao atualizar a rega da planta no banco!");
+            }
+          }
         });
       });
     });

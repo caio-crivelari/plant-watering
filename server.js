@@ -63,7 +63,7 @@ app.post("/insertNewPlant", async (req, res) => {
 app.get("/getPlants", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, plant_name, last_watering, watering_frequency, next_watering, last_fertilization, fertilization_frequency, next_fertilization from plant_schema.tbl_plants"
+      "SELECT id, plant_name, last_watering, watering_frequency, next_watering, last_fertilization, fertilization_frequency, next_fertilization from plant_schema.tbl_plants ORDER BY plant_name"
     );
 
     res.json({ success: true, data: result.rows });
@@ -72,6 +72,29 @@ app.get("/getPlants", async (req, res) => {
     res
       .status(500)
       .json({ success: false, message: "Erro ao listar as plantas" });
+  }
+});
+
+//PUT - UPDATE
+app.put("/plants/:id/water", async (req, res) => {
+  const { id } = req.params;
+  const { lastWatering, nextWatering } = req.body;
+
+  try {
+    const updateQuery = `UPDATE plant_schema.tbl_plants set last_watering = $1, next_watering = $2 WHERE id = $3 RETURNING *;`;
+
+    const result = await pool.query(updateQuery, [
+      lastWatering,
+      nextWatering,
+      id,
+    ]);
+
+    res.json({ success: true, data: result.rows[0] });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Erro ao atualizar a rega!" });
   }
 });
 
