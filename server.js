@@ -98,6 +98,50 @@ app.put("/plants/:id/water", async (req, res) => {
   }
 });
 
+app.put("/plants/:id/fertilize", async (req, res) => {
+  const { id } = req.params;
+  const { lastFertilization, nextFertilization } = req.body;
+
+  try {
+    const updateQuery = `UPDATE plant_schema.tbl_plants set last_fertilization = $1, next_fertilization = $2 WHERE id = $3 RETURNING *;`;
+
+    const result = await pool.query(updateQuery, [
+      lastFertilization,
+      nextFertilization,
+      id,
+    ]);
+
+    res.json({ success: true, data: result.rows[0] });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Erro ao atualizar a adubagem!" });
+  }
+});
+
+//DELETE
+app.delete("/plants/:id/delete", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      "DELETE FROM plant_schema.tbl_plants WHERE id = $1 RETURNING *",
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Planta não encontrada" });
+    }
+    res.json({ success: true, message: "Planta excluída com sucesso!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Erro ao excluir planta" });
+  }
+});
+
 //SE O SERVIDOR CONSEGUIR RODAR, APARECE NO CONSOLE A MENSAGEM ABAIXO
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);

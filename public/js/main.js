@@ -137,61 +137,161 @@ function renderPlants() {
               <p>Próxima Adubagem: <span id="plant-next-fertilization">${plant.next_fertilization}</span></p>
             </div>
             <div class="plant-actions">
-              <i id="${plant.id}" class="ph-fill ph-drop"></i>
+              <i data-plant-id="${plant.id}" class="action-icon fa-solid fa-droplet water-plant"></i>
+              <i data-plant-id="${plant.id}" class="action-icon fa-solid fa-seedling fertilize-plant"></i>
+              <i data-plant-id="${plant.id}" class="action-icon fa-solid fa-trash delete-plant"></i>
             </div>
           </div>
           `;
         });
       }
 
-      const waterPlantButtons = document.querySelectorAll(".ph-drop");
-      waterPlantButtons.forEach((button) => {
-        button.addEventListener("click", async () => {
-          const plantId = button.getAttribute("id");
-          let plantLastWatering = document.querySelector(
-            `#plant-id-${plantId} #plant-last-watering`
-          ).textContent;
-          const plantWateringFrequency = document.querySelector(
-            `#plant-id-${plantId} #plant-watering-frequency`
-          ).textContent;
+      const wateringPlantButtons = document.querySelectorAll(".water-plant");
+      wateringPlantButtons.forEach((button) => {
+        button.addEventListener("click", waterPlant);
+      });
 
-          const today = new Date();
-          const todayFormatted = dateFormatter(today);
+      const fertilizePlantButtons =
+        document.querySelectorAll(".fertilize-plant");
+      fertilizePlantButtons.forEach((button) => {
+        button.addEventListener("click", fertilizePlant);
+      });
 
-          if (plantLastWatering == todayFormatted) {
-            alert("Planta já regada no dia de hoje!");
-            return;
-          } else {
-            const nextWateringUpdated = nextDateCalculator(
-              todayFormatted,
-              plantWateringFrequency
-            );
-
-            try {
-              const response = await fetch(`/plants/${plantId}/water`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  lastWatering: todayFormatted,
-                  nextWatering: nextWateringUpdated,
-                }),
-              });
-              if (!response.ok) throw new Error("Erro ao atualizar a rega");
-              const progressBar = document.querySelector(".progress-bar");
-              progressBar.style.display = "block";
-              progressBar.innerHTML = `Planta regada com sucesso! <div class="progress-background"></div>`;
-              setTimeout(() => {
-                progressBar.style.display = "none";
-              }, 3000);
-              renderPlants();
-            } catch (error) {
-              console.error(error);
-              alert("Erro ao atualizar a rega da planta no banco!");
-            }
-          }
-        });
+      const deletePlantButtons = document.querySelectorAll(".delete-plant");
+      deletePlantButtons.forEach((button) => {
+        button.addEventListener("click", deletePlant);
       });
     });
+}
+
+async function waterPlant(evt) {
+  const plantId = evt.currentTarget.getAttribute("data-plant-id");
+  let plantLastWatering = document.querySelector(
+    `#plant-id-${plantId} #plant-last-watering`
+  ).textContent;
+  const plantWateringFrequency = document.querySelector(
+    `#plant-id-${plantId} #plant-watering-frequency`
+  ).textContent;
+
+  const today = new Date();
+  const todayFormatted = dateFormatter(today);
+
+  if (plantLastWatering == todayFormatted) {
+    alert("Planta já regada no dia de hoje!");
+    return;
+  } else {
+    const nextWateringUpdated = nextDateCalculator(
+      todayFormatted,
+      plantWateringFrequency
+    );
+
+    try {
+      const response = await fetch(`/plants/${plantId}/water`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lastWatering: todayFormatted,
+          nextWatering: nextWateringUpdated,
+        }),
+      });
+      if (!response.ok) throw new Error("Erro ao atualizar a rega");
+      const progressBar = document.querySelector(".progress-bar");
+      progressBar.style.display = "block";
+      progressBar.innerHTML = `Planta regada com sucesso! <div class="progress-background"></div>`;
+      setTimeout(() => {
+        progressBar.style.display = "none";
+      }, 3000);
+      renderPlants();
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao atualizar a rega da planta no banco!");
+    }
+  }
+}
+
+async function fertilizePlant(evt) {
+  const plantId = evt.currentTarget.getAttribute("data-plant-id");
+  let plantLastFertilization = document.querySelector(
+    `#plant-id-${plantId} #plant-last-fertilization`
+  ).textContent;
+  const plantFertilizationFrequency = document.querySelector(
+    `#plant-id-${plantId} #plant-fertilization-frequency`
+  ).textContent;
+
+  const today = new Date();
+  const todayFormatted = dateFormatter(today);
+
+  if (plantLastFertilization == todayFormatted) {
+    alert("Planta já fertilizada no dia de hoje!");
+    return;
+  } else {
+    const nextFertilizationUpdated = nextDateCalculator(
+      todayFormatted,
+      plantFertilizationFrequency
+    );
+
+    try {
+      const response = await fetch(`/plants/${plantId}/fertilize`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lastFertilization: todayFormatted,
+          nextFertilization: nextFertilizationUpdated,
+        }),
+      });
+      if (!response.ok) throw new Error("Erro ao atualizar a adubagem");
+      const progressBar = document.querySelector(".progress-bar");
+      progressBar.style.display = "block";
+      progressBar.innerHTML = `Planta adubada com sucesso! <div class="progress-background"></div>`;
+      setTimeout(() => {
+        progressBar.style.display = "none";
+      }, 3000);
+      renderPlants();
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao atualizar a rega da planta no banco!");
+    }
+  }
+}
+
+async function deletePlant(evt) {
+  const deleteModal = document.querySelector(".delete-plant-modal");
+  deleteModal.classList.remove("hidden");
+  setTimeout(() => deleteModal.classList.add("show"), 10);
+
+  const closeDeleteModalBtn = document.querySelector(".close-delete-modal");
+  closeDeleteModalBtn.addEventListener("click", () => {
+    deleteModal.classList.remove("show");
+    deleteModal.addEventListener(
+      "transitionend",
+      () => {
+        deleteModal.classList.add("hidden");
+      },
+      { once: true }
+    );
+  });
+  const plantId = evt.currentTarget.getAttribute("data-plant-id");
+
+  const confirmDeleteButton = document.querySelector("#confirm-delete");
+
+  confirmDeleteButton.addEventListener("click", async () => {
+    try {
+      const response = await fetch(`/plants/${plantId}/delete`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Erro ao deletar a planta");
+      const progressBar = document.querySelector(".progress-bar");
+      progressBar.style.display = "block";
+      progressBar.innerHTML = `Planta deletada com sucesso! <div class="progress-background"></div>`;
+      setTimeout(() => {
+        progressBar.style.display = "none";
+      }, 3000);
+      renderPlants();
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao deletar a planta no banco!");
+    }
+  });
 }
 
 renderPlants();

@@ -28,7 +28,7 @@
     <div id="app">
       <section class="new-plant-modal hidden">
         <form action="" id="new-plant-form">
-          <i id="close-modal-btn" class="ph-fill ph-x-square"></i>
+          <i id="close-modal-btn" class="ph-fill ph-x-square close-modal-btn"></i>
           <h1 class="main-title">Nova Planta</h1>
           <div class="input-wrapper">
             <input
@@ -83,6 +83,18 @@
           </div>
           <button type="submit" class="form-button">Salvar</button>
         </form>
+      </section>
+      <section class="delete-plant-modal hidden">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Excluir Planta</h2>
+            <p>Tem certeza que deseja excluir esta planta?</p>
+          </div>
+          <div class="modal-actions">
+            <button id="cancel-delete" class="close-delete-modal" data-target="delete-plant-modal">Cancelar</button>
+            <button id="confirm-delete" class="btn-delete">Confirmar</button>
+          </div>
+        </div>
       </section>
       <main>
         <h1 class="main-title">Minhas Plantas</h1>
