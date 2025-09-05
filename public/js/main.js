@@ -101,6 +101,7 @@ function nextDateCalculator(lastDate, frequency) {
   return dateFormatter(convertedDate);
 }
 
+//FUNÇÃO QUE ALTERNA O FORMATO DA DATA DE DD/MM/AAAA PARA AAAA-MM-DD PARA REALIZAR CÁCULOS
 function unformatDate(dateToFormat) {
   const day = parseInt(dateToFormat.slice(0, 2));
   const month = parseInt(dateToFormat.slice(3, 5));
@@ -109,6 +110,7 @@ function unformatDate(dateToFormat) {
   return convertedDate;
 }
 
+//FUNÇÃO QUE FORMATA A DATA PARA DD/MM/AAAA
 function dateFormatter(dateToFormat) {
   const formattedDay = String(dateToFormat.getDate()).padStart(2, "0");
   const formattedMonth = String(dateToFormat.getMonth() + 1).padStart(2, "0");
@@ -119,7 +121,6 @@ function dateFormatter(dateToFormat) {
 
 function renderPlants() {
   const plantsContainer = document.querySelector(".plant-cards-container");
-
   fetch("/getPlants")
     .then((res) => res.json())
     .then((data) => {
@@ -146,6 +147,9 @@ function renderPlants() {
           `;
         });
       }
+
+      checkWateringDate();
+      checkFertilizationDate();
 
       const wateringPlantButtons = document.querySelectorAll(".water-plant");
       wateringPlantButtons.forEach((button) => {
@@ -324,6 +328,32 @@ async function createCalendarEvent(plantName, date) {
   } catch (error) {
     console.error("Erro ao chamar backend:", error);
   }
+}
+
+function checkWateringDate() {
+  const renderedNextWateringDate = document.querySelector("#plant-next-watering").textContent
+  const nextWateringDateSpan = document.querySelector('#plant-next-watering')
+  const lastWateringDate = unformatDate(renderedNextWateringDate)
+  const today = new Date();
+  const nextWateringDay = String(lastWateringDate.getDate()).padStart(2, "0")
+  const todayDay = String(today.getDate()).padStart(2, "0");
+
+ if(todayDay >= nextWateringDay) {
+  nextWateringDateSpan.classList.add("alert-date");
+ }
+}
+
+function checkFertilizationDate() {
+  const renderedNextFertilizationDate = document.querySelector("#plant-next-fertilization").textContent
+  const nextFertilizationDateSpan = document.querySelector('#plant-next-fertilization')
+  const lastFertilizationDate = unformatDate(renderedNextFertilizationDate)
+  const today = new Date();
+  const nextFertilizationDay = String(lastFertilizationDate.getDate()).padStart(2, "0")
+  const todayDay = String(today.getDate()).padStart(2, "0");
+
+ if(todayDay >= nextFertilizationDay) {
+  nextFertilizationDateSpan.classList.add("alert-date");
+ }
 }
 
 renderPlants();

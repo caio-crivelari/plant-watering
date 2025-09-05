@@ -18,6 +18,7 @@
   --water-drop: #3bb1ff;
   --water-drop-hover: #0080d5;
   --delete: #ff6347;
+  --alert-color: #e83f21;
   --delete-hover: #cb4f39;
 }
 
@@ -294,6 +295,11 @@ main h1,
 
 .fa-trash:hover {
   color: var(--delete-hover);
+}
+
+.alert-date {
+  color: var(--alert-color);
+  font-weight: bold;
 }
 /*ANIMAÇÕES*/
 
