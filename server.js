@@ -1,12 +1,52 @@
 // server.js
 const express = require("express");
 const pool = require("./db/connection");
+const { google } = require("googleapis");
+const fs = require("fs");
+const path = require("path"); // ✅ faltava importar
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.static("public"));
 app.use(express.json());
+
+// Caminhos para suas credenciais
+const CREDENTIALS_PATH = path.join(process.cwd(), "credentials.json");
+const TOKEN_PATH = path.join(process.cwd(), "token.json");
+
+// Escopos necessários para o Calendar
+const SCOPES = ["https://www.googleapis.com/auth/calendar.events"];
+
+// Lê o credentials.json
+function loadCredentials() {
+  const content = fs.readFileSync(CREDENTIALS_PATH, "utf-8");
+  return JSON.parse(content);
+}
+
+// Lê o token.json (se existir)
+function loadToken() {
+  if (!fs.existsSync(TOKEN_PATH)) {
+    throw new Error("Token não encontrado! Gere o token.json primeiro.");
+  }
+  const content = fs.readFileSync(TOKEN_PATH, "utf-8");
+  return JSON.parse(content);
+}
+
+function getAuthClient() {
+  const { client_secret, client_id, redirect_uris } = loadCredentials().web; // 👈 direto em "web"
+
+  const oAuth2Client = new google.auth.OAuth2(
+    client_id,
+    client_secret,
+    redirect_uris[0]
+  );
+
+  const token = loadToken();
+  oAuth2Client.setCredentials(token);
+
+  return oAuth2Client;
+}
 
 /*ROTINA DE TESTE DE CONEXÃO COM O BANCO DE DADOS: USE O http://localhost:3000/test-db */
 app.get("/test-db", async (req, res) => {
@@ -23,6 +63,53 @@ app.get("/test-db", async (req, res) => {
 });
 
 //POST
+app.post("/createCalendarEvent", async (req, res) => {
+  const { plantName, date } = req.body;
+
+  try {
+    const auth = getAuthClient();
+    const calendar = google.calendar({ version: "v3", auth });
+
+    // Transformando a data recebida (dd/mm/aaaa) para incluir 14:00
+    const [day, month, year] = date.split("/"); 
+    const eventDate = new Date(year, month - 1, day, 14, 0); // hora 14:00
+
+    const event = {
+      summary: `Regar ${plantName}`,
+      description: "Lembrete automático do app de plantas 🌱",
+      start: {
+        dateTime: eventDate.toISOString(),
+        timeZone: "America/Sao_Paulo",
+      },
+      end: {
+        dateTime: new Date(eventDate.getTime() + 30 * 60 * 1000).toISOString(), // duração 30 min
+        timeZone: "America/Sao_Paulo",
+      },
+      reminders: {
+        useDefault: false,
+        overrides: [
+          { method: "popup", minutes: 10 },
+          { method: "email", minutes: 10 },
+        ],
+      },
+    };
+
+    const response = await calendar.events.insert({
+      calendarId: "primary",
+      resource: event,
+    });
+
+    res.json({
+      success: true,
+      message: "Evento criado com sucesso",
+      link: response.data.htmlLink,
+    });
+  } catch (error) {
+    console.error("Erro ao criar evento no Calendar:", error);
+    res.status(500).json({ success: false, message: "Erro ao criar evento" });
+  }
+});
+
 app.post("/insertNewPlant", async (req, res) => {
   const {
     plantName,
@@ -72,6 +159,47 @@ app.get("/getPlants", async (req, res) => {
     res
       .status(500)
       .json({ success: false, message: "Erro ao listar as plantas" });
+  }
+});
+
+// Rota para iniciar o fluxo OAuth2
+app.get("/auth", (req, res) => {
+  const { client_id, redirect_uris } = loadCredentials().web;
+  const oAuth2Client = new google.auth.OAuth2(
+    client_id,
+    loadCredentials().web.client_secret,
+    redirect_uris[0]
+  );
+
+  const authUrl = oAuth2Client.generateAuthUrl({
+    access_type: "offline",
+    scope: SCOPES,
+  });
+
+  res.redirect(authUrl);
+});
+
+// Callback do Google OAuth2
+app.get("/oauth2callback", async (req, res) => {
+  const code = req.query.code;
+  const { client_id, client_secret, redirect_uris } = loadCredentials().web;
+
+  const oAuth2Client = new google.auth.OAuth2(
+    client_id,
+    client_secret,
+    redirect_uris[0]
+  );
+
+  try {
+    const { tokens } = await oAuth2Client.getToken(code);
+    oAuth2Client.setCredentials(tokens);
+
+    // salva o token.json no disco
+    fs.writeFileSync(TOKEN_PATH, JSON.stringify(tokens));
+    res.send("✅ Autorização concluída! Token salvo em token.json");
+  } catch (err) {
+    console.error("Erro ao obter o token:", err);
+    res.status(500).send("Erro ao autenticar com o Google");
   }
 });
 

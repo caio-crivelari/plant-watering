@@ -28,7 +28,10 @@
     <div id="app">
       <section class="new-plant-modal hidden">
         <form action="" id="new-plant-form">
-          <i id="close-modal-btn" class="ph-fill ph-x-square close-modal-btn"></i>
+          <i
+            id="close-modal-btn"
+            class="ph-fill ph-x-square close-modal-btn"
+          ></i>
           <h1 class="main-title">Nova Planta</h1>
           <div class="input-wrapper">
             <input
@@ -47,6 +50,7 @@
               name="watering-frequency"
               id="watering-frequency"
               placeholder="Frequencia de rega (dias)"
+              min="1"
               required
             />
           </div>
@@ -78,6 +82,7 @@
               name="fertilization-frequency"
               id="fertilization-frequency"
               placeholder="Frequencia de adubagem (dias)"
+              min="1"
               required
             />
           </div>
@@ -88,10 +93,16 @@
         <div class="modal-content">
           <div class="modal-header">
             <h2>Excluir Planta</h2>
-            <p>Tem certeza que deseja excluir esta planta?</p>
+            <p>Tem certeza que deseja excluir a planta <span id="delete-plant-name"></span>?</p>
           </div>
           <div class="modal-actions">
-            <button id="cancel-delete" class="close-delete-modal" data-target="delete-plant-modal">Cancelar</button>
+            <button
+              id="cancel-delete"
+              class="close-delete-modal"
+              data-target="delete-plant-modal"
+            >
+              Cancelar
+            </button>
             <button id="confirm-delete" class="btn-delete">Confirmar</button>
           </div>
         </div>

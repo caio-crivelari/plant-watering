@@ -83,6 +83,7 @@ async function insertNewPlant() {
     setTimeout(() => {
       progressBar.style.display = "none";
     }, 3000);
+    /* createCalendarEvent(plantName, nextWatering); */
     document.querySelector("#new-plant-form").reset();
     renderPlants();
     return;
@@ -137,9 +138,9 @@ function renderPlants() {
               <p>Próxima Adubagem: <span id="plant-next-fertilization">${plant.next_fertilization}</span></p>
             </div>
             <div class="plant-actions">
-              <i data-plant-id="${plant.id}" class="action-icon fa-solid fa-droplet water-plant"></i>
-              <i data-plant-id="${plant.id}" class="action-icon fa-solid fa-seedling fertilize-plant"></i>
-              <i data-plant-id="${plant.id}" class="action-icon fa-solid fa-trash delete-plant"></i>
+              <i data-plant-id="${plant.id}" data-plant-name="${plant.plant_name}" class="action-icon fa-solid fa-droplet water-plant"></i>
+              <i data-plant-id="${plant.id}" data-plant-name="${plant.plant_name}" class="action-icon fa-solid fa-seedling fertilize-plant"></i>
+              <i data-plant-id="${plant.id}" data-plant-name="${plant.plant_name}" class="action-icon fa-solid fa-trash delete-plant"></i>
             </div>
           </div>
           `;
@@ -166,6 +167,7 @@ function renderPlants() {
 
 async function waterPlant(evt) {
   const plantId = evt.currentTarget.getAttribute("data-plant-id");
+  const plantName = evt.currentTarget.getAttribute("data-plant-name");
   let plantLastWatering = document.querySelector(
     `#plant-id-${plantId} #plant-last-watering`
   ).textContent;
@@ -195,6 +197,7 @@ async function waterPlant(evt) {
         }),
       });
       if (!response.ok) throw new Error("Erro ao atualizar a rega");
+      createCalendarEvent(plantName, nextWateringUpdated);
       const progressBar = document.querySelector(".progress-bar");
       progressBar.style.display = "block";
       progressBar.innerHTML = `Planta regada com sucesso! <div class="progress-background"></div>`;
@@ -257,7 +260,7 @@ async function fertilizePlant(evt) {
 async function deletePlant(evt) {
   const deleteModal = document.querySelector(".delete-plant-modal");
   deleteModal.classList.remove("hidden");
-  setTimeout(() => deleteModal.classList.add("show"), 10);
+  setTimeout(() => deleteModal.classList.add("show"), 3);
 
   const closeDeleteModalBtn = document.querySelector(".close-delete-modal");
   closeDeleteModalBtn.addEventListener("click", () => {
@@ -271,27 +274,56 @@ async function deletePlant(evt) {
     );
   });
   const plantId = evt.currentTarget.getAttribute("data-plant-id");
+  const plantName = evt.currentTarget.getAttribute("data-plant-name");
+  const plantToDelete = document.querySelector("#delete-plant-name");
+  plantToDelete.innerHTML = "";
+  plantToDelete.innerHTML = plantName;
 
   const confirmDeleteButton = document.querySelector("#confirm-delete");
 
-  confirmDeleteButton.addEventListener("click", async () => {
-    try {
-      const response = await fetch(`/plants/${plantId}/delete`, {
-        method: "DELETE",
-      });
-      if (!response.ok) throw new Error("Erro ao deletar a planta");
-      const progressBar = document.querySelector(".progress-bar");
-      progressBar.style.display = "block";
-      progressBar.innerHTML = `Planta deletada com sucesso! <div class="progress-background"></div>`;
-      setTimeout(() => {
-        progressBar.style.display = "none";
-      }, 3000);
-      renderPlants();
-    } catch (error) {
-      console.error(error);
-      alert("Erro ao deletar a planta no banco!");
+  confirmDeleteButton.addEventListener(
+    "click",
+    async () => {
+      try {
+        const response = await fetch(`/plants/${plantId}/delete`, {
+          method: "DELETE",
+        });
+        if (!response.ok) throw new Error("Erro ao deletar a planta");
+        const progressBar = document.querySelector(".progress-bar");
+        progressBar.style.display = "block";
+        progressBar.innerHTML = `Planta deletada com sucesso! <div class="progress-background"></div>`;
+        setTimeout(() => {
+          progressBar.style.display = "none";
+        }, 3000);
+        deleteModal.classList.add("hidden");
+        renderPlants();
+      } catch (error) {
+        console.error(error);
+        alert("Erro ao deletar a planta no banco!");
+      }
+    },
+    { once: true }
+  );
+}
+
+async function createCalendarEvent(plantName, date) {
+  try {
+    const response = await fetch("/createCalendarEvent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plantName, date }),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      console.log("Evento criado no Calendar:", result.link);
+    } else {
+      console.error("Erro ao criar evento:", result.message);
     }
-  });
+  } catch (error) {
+    console.error("Erro ao chamar backend:", error);
+  }
 }
 
 renderPlants();
