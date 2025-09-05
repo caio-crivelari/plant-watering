@@ -81,7 +81,7 @@ input {
 
 #app {
   min-height: 100vh;
-  background: url("../assets/background-mobile.png") top center/cover no-repeat;
+  background: url("../assets/background-desktop.png") bottom center/cover no-repeat;
   display: grid;
   place-content: center;
   padding: 1rem;
@@ -89,7 +89,7 @@ input {
 
 .new-plant-modal,
 .delete-plant-modal {
-  background: url("../assets/background-mobile.png") top center/cover no-repeat;
+  background: url("../assets/background-desktop.png") bottom center/cover no-repeat;
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -147,7 +147,7 @@ input {
   padding: 1.2rem;
   border-radius: 1.5rem;
   cursor: pointer;
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
   font-weight: bold;
   color: var(--white);
 }
@@ -156,7 +156,7 @@ button#cancel-delete {
   background-color: var(--delete);
 }
 
-button#cancel-delete:hover{
+button#cancel-delete:hover {
   background-color: var(--delete-hover);
 }
 
@@ -315,5 +315,18 @@ main h1,
   to {
     top: 0;
     opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  #app {
+    background: url("../assets/background-mobile.png") top center/cover
+      no-repeat;
+  }
+
+  .new-plant-modal,
+  .delete-plant-modal {
+    background: url("../assets/background-mobile.png") top center/cover
+      no-repeat;
   }
 }
